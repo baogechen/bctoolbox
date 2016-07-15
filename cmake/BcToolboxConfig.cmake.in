@@ -47,7 +47,9 @@ if(LINPHONE_BUILDER_GROUP_EXTERNAL_SOURCE_PATH_BUILDERS)
 else()
 	set(BCTOOLBOX_INCLUDE_DIRS "${BCTOOLBOX_CMAKE_DIR}/../../../include")
 endif()
-
+set(_BCTOOLBOX_ROOT_PATHS
+	${CMAKE_INSTALL_PREFIX}
+)
 set(BCTOOLBOX_LDFLAGS "@LINK_FLAGS_STR@")
 set(BCTOOLBOX_LIBRARIES )
 foreach(comp ${BcToolbox_FIND_COMPONENTS})
@@ -63,7 +65,12 @@ foreach(comp ${BcToolbox_FIND_COMPONENTS})
 	if(TARGET ${targetname})
 		set(BCTOOLBOX_${uppercomp}_INCLUDE_DIRS "${BCTOOLBOX_INCLUDE_DIRS}")
 		set(BCTOOLBOX_${uppercomp}_LIBRARIES ${targetname})
-		list(APPEND BCTOOLBOX_LIBRARIES ${targetname})
+find_library(BCTOOLBOX_LIBRARIES
+	NAMES ${targetname}
+	HINTS _BCTOOLBOX_ROOT_PATHS
+	PATH_SUFFIXES bin lib
+)
+		#list(APPEND BCTOOLBOX_LIBRARIES ${targetname})
 		set(BCTOOLBOX_${uppercomp}_FOUND 1)
 		if(comp STREQUAL "core")
 			set(BCTOOLBOX_FOUND 1)
